@@ -37,7 +37,7 @@ public class Main {
                         System.out.println("\n\nMember ID is not valid.\n\n");
                         continue;
                     }
-                    System.out.println("Total Miles Flown by MemberID: " + input + totSumMiles(memberFlights));
+                    System.out.println("Total Miles Flown: " + totSumMiles(memberFlights));
                     break;
                 case 2:
                     System.out.println("Learn More About Our Rewards!");
