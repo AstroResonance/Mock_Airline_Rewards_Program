@@ -10,14 +10,16 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
+    static Scanner scanner = new Scanner(System.in);
     // userInput function that gathers the user input and returns it to where it's used.
     public static int userInput() {
         System.out.println("Enter 1 to Search by Member ID.");
         System.out.println("Enter 2 to Learn More About Our Rewards!");
+        System.out.println("Enter 3 to Sign Up.");
+        System.out.println("Enter 4 to Input Flight Miles (Members Only).");
         System.out.println("Enter 0 to Exit this program.");
         Scanner object = new Scanner(System.in);
-        int userOption = object.nextInt();
-        return userOption;
+        return object.nextInt();
     }
 
 
@@ -96,11 +98,11 @@ public class Main {
                     "-----------------------------------------------------------------------\n");
                     break;
                 case 2:
-                    System.out.println(displayRewards());;
+                    System.out.println(displayRewards());
                     break;
 
                 case 3:
-                    final FlightRecord flightRecord = createAccount(fileInfo);
+                    final FlightRecord flightRecord = createAccount();
                     fileInfo.add(flightRecord);
                     Files.write(
                         Paths.get("inputFile.txt"),
@@ -109,6 +111,15 @@ public class Main {
                     );
                     String displayOutput = displayNewMemberInfo(flightRecord.getDate(), flightRecord.memberID, flightRecord.flightMiles);
                     System.out.println(displayOutput);
+                    break;
+                case 4:
+                    final FlightRecord addingOnToFlightRecord = inputFlightMiles(fileInfo);
+                    fileInfo.add(addingOnToFlightRecord);
+                    Files.write(
+                            Paths.get("inputFile.txt"),
+                            (addingOnToFlightRecord + "\n").getBytes(),
+                            StandardOpenOption.APPEND
+                    );
                     break;
                 default:
                     System.out.println("\n\nPlease enter a valid menu option.\n\n");
@@ -120,7 +131,7 @@ public class Main {
 
     public static List<FlightRecord> readFile() throws IOException {
         List<FlightRecord> fileInfo = new ArrayList<>();
-        Scanner scnr = new Scanner(new FileReader("inputFile.txt"));
+        Scanner inputFileScanner = new Scanner(new FileReader("inputFile.txt"));
 
         while (inputFileScanner.hasNextLine() && inputFileScanner.hasNext()) {
 
@@ -130,18 +141,9 @@ public class Main {
                     inputFileScanner.nextInt()
             );
 
-            flightRecords.add(fileObjects);
+            fileInfo.add(fileObjects);
         }
         return fileInfo;
-    }
-
-    // userInput function that gathers the user input and returns it to where it's used.
-    public static int userInput() {
-        System.out.println("Enter 1 to Search by Member ID.");
-        System.out.println("Enter 2 to Learn More About Our Rewards.");
-        System.out.println("Enter 3 to Sign Up.");
-        System.out.println("Enter 0 to Exit.\n");
-        return scanner.nextInt();
     }
 
     public static int iDMember(final List<FlightRecord> memberFlights) {
@@ -158,7 +160,6 @@ public class Main {
 
         final List<FlightRecord> memberFlights = new ArrayList<>();
         System.out.println("\nPlease enter your Member ID.\n");
-
         final int memberId = scanner.nextInt();
         for (final FlightRecord flightRecord : flightRecords) {
             if (memberId == flightRecord.memberID) {
@@ -326,7 +327,7 @@ public class Main {
                 "co-pilot’s seat for Super Executive Platinum passengers.\n\n" +
                 "---------------------------------------------------------------------------------------------------------------------------\n";
     }
-    public static FlightRecord createAccount(final List<FlightRecord> flightRecords) {
+    public static FlightRecord createAccount() {
         System.out.println("Please enter the date as (YYYY-MM-DD).");
         LocalDate inputDate = userInputDate();
         int randomIdNumber = memberIDGenerator();
@@ -357,13 +358,36 @@ public class Main {
     public static int memberIDGenerator(){
         Random newID = new Random();
         int upperbound = 1000;
-        int randomID = newID.nextInt(upperbound);
-        return randomID;
+        return newID.nextInt(upperbound);
     }
     public static String displayNewMemberInfo(LocalDate inputDate, int randomIdNumber, int userFlightMiles) {
         return "Your new Member Id is: " + randomIdNumber +
                 "\nCreated on: " + inputDate +
                 "\nThat has " + userFlightMiles + "miles so far.\n";
     }
+    public static FlightRecord inputFlightMiles(List<FlightRecord> flightRecords) {
+        LocalDate todayDate = null;
+        System.out.println("PLease enter your Member ID.");
+        int input = scanner.nextInt();
+        int milesFlown = 0;
+            if (input == memberIDFinder(flightRecords,input)) {
+                System.out.println("What is today's date?");
+                todayDate = userInputDate();
+                System.out.println("How many miles are you flying today?");
+                milesFlown = userInputInt();
+            }
+            else{
+                System.out.println("Please enter a valid Member ID.");
+                inputFlightMiles(flightRecords);
+            }
+        return new FlightRecord(todayDate, input,milesFlown);
+    }
+    public static int memberIDFinder(List<FlightRecord> flightRecords, int input){
+        for (final FlightRecord flightRecord : flightRecords) {
+            if (input == flightRecord.memberID) {
+                return input;
+            }
+        }
+        return 0;
+    }
 }
-
