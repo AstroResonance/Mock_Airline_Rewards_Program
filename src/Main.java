@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-    static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     // userInput function that gathers the user input and returns it to where it's used.
     public static int userInput() {
         System.out.println("Enter 1 to Search by Member ID.");
@@ -120,6 +120,7 @@ public class Main {
                             (addingOnToFlightRecord + "\n").getBytes(),
                             StandardOpenOption.APPEND
                     );
+                    System.out.println("You're all set! Enjoy your flight!");
                     break;
                 default:
                     System.out.println("\n\nPlease enter a valid menu option.\n\n");
